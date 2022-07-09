@@ -1,0 +1,14 @@
+*.log
+*log*
+pid
+*.swp
+*.pyc
+/__pycache__
+/Cogs/__pycache__
+/Cogs/data/gambling.json
+/Cogs/data/holidays.json
+/Cogs/data/user_shortcuts.json
+restart_bot
+/seasons/*
+pt.json
+bot.ini
