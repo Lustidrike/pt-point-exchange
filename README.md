@@ -52,7 +52,7 @@ Everyone may feel free to fork the project to fix bugs or to add their own gambl
 4. Fill in your log_channel_id - this channel is used *exclusively* to post errors that occur during message processing so that the project maintainer can fix any unexpected bugs.
 5. If using the server bridge feature, fill in your bot_id and bridges (bridges are separated by spaces, channels within a bridge separated by commas).
 6. Fill in your info in Cogs/data/gambling.json and Cogs/data/holidays.json. Appropriate examples are placed in that directory, but not used by default.
-7. List your admins in bot.ini, as well as your subscriber role in the [Gambling] section if using the gambling cog. Admins are usernames separated by commas.
+7. List your admins roles in bot.ini (using role IDs) as well as your subscriber role (by name) in the [Gambling] section if using the gambling cog. Admins roles should be separated by commas.
 8. Run 'python3 .' in the root directory.
 
 # Asserts:
