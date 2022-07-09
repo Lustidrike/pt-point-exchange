@@ -479,7 +479,7 @@ class ServerBridge(BaseCog):
 
         # NOTE: exceptions are caught by calling function
 
-        chunk_size = 128
+        chunk_size = 2000
         final_content = message.clean_content + '\n' + gen_text
 
         if len(final_content) <= chunk_size:
