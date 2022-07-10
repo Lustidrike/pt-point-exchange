@@ -172,6 +172,10 @@ class ServerBridge(BaseCog):
 
         # NOTE: exceptions are caught by calling function
 
+        if message.type != discord.MessageType.default:
+            # Ignore system messages
+            return
+
         if int(message.author.id) != int(self.bot_id) or self.inconsistency_text not in message.content:
             webhook_entry = self.webhooks.get(message.channel.id)
             if webhook_entry:
