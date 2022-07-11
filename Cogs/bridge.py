@@ -170,8 +170,8 @@ class ServerBridge(BaseCog):
 
         # NOTE: exceptions are caught by calling function
 
-        # Do not handle system messages (e.g. pin/unpin)
         if message.type != discord.MessageType.default:
+            # Ignore system messages
             return
 
         if int(message.author.id) != int(self.bot_id) or self.inconsistency_text not in message.content:
