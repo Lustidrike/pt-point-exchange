@@ -35,9 +35,7 @@ class MessageCacheItem:
             return True
         return False
 
-    def find_message_for_edit_delete(self, message_id):
-        """Check if this message is the one we posted to forward the message a user has edited or deleted."""
-
+    def find_message(self, message_id):
         return self.message_id == message_id
 
 
@@ -172,6 +170,10 @@ class ServerBridge(BaseCog):
 
         # NOTE: exceptions are caught by calling function
 
+        # Do not handle system messages (e.g. pin/unpin)
+        if message.type != discord.MessageType.default:
+            return
+
         if int(message.author.id) != int(self.bot_id) or self.inconsistency_text not in message.content:
             webhook_entry = self.webhooks.get(message.channel.id)
             if webhook_entry:
@@ -188,6 +190,45 @@ class ServerBridge(BaseCog):
                     log.exception(e)
                     await self.bot.log_channel.send('**[ERROR]** A critical error occurred while broadcasting a message on server bridge (top level). Check logs. ' + config.additional_error_message)
 
+
+    async def pin_or_unpin_message(self, message_id, channel_id, original_message):
+        """Pin or unpin a message in a specific channel."""
+        try:
+            channel = self.bot.get_channel(channel_id)
+            if not channel:
+                raise ValueError('Failed to find channel with id ' + str(channel_id))
+
+            message = await channel.fetch_message(message_id)
+            if not message:
+                raise ValueError('Failed to find webhook message with id ' + str(message_id))
+
+            if original_message.pinned and not message.pinned:
+                await message.pin()
+            elif not original_message.pinned and message.pinned:
+                await message.unpin()
+        except Exception as e:
+            log.exception(e)
+            await self.bot.log_channel.send('**[ERROR]** Critical error trying to pin/unpin message in channel ' + str(channel_id) + ' ' + config.additional_error_message)
+
+
+    async def handle_changed_pin_status(self, message, bridge_index):
+        """Pin or unpin a message in all channels of a server bridge."""
+
+        # NOTE: top-level exceptions are caught by calling function
+
+        for i, cached_message in enumerate(self.message_cache[bridge_index]):
+            if cached_message.find_message(message.id) or cached_message.find_message_for_reply(message.id):
+                index = i
+
+                # Found message in our cache, now pin/unpin all webhook messages associated with this:
+                for (webhook_message_id, channel_id) in cached_message.webhook_message_ids:
+                    await self.pin_or_unpin_message(webhook_message_id, channel_id, message)
+
+                # Also try to pin or unpin the message itself it the pin/unpin was done on a webhook message:
+                await self.pin_or_unpin_message(cached_message.message_id, cached_message.channel_id, message)
+
+                # Found and handled the message, we are done
+                break
 
     async def broadcast_message(self, message, bridge_index):
         """Broadcast a message to all subscribers in a server bridge."""
@@ -543,16 +584,28 @@ class ServerBridge(BaseCog):
         if int(after.author.id) != int(self.bot_id):
             webhook_entry = self.webhooks.get(after.channel.id)
             if webhook_entry:
+                author_name = str(after.author.display_name)
+                if not author_name:
+                    await self.bot.log_channel.send('**[ERROR]** Unknown author, rejecting edit on message in ' + str(after.channel.name) + ' ' + config.additional_error_message)
+                    return
+
+                bridge_index = webhook_entry[1]
+
+                # This is a pin/unpin event, handle only this aspect of it
+                if before.pinned != after.pinned:
+                    try:
+                        await self.handle_changed_pin_status(after, bridge_index)
+                    except Exception as e:
+                        log.exception(e)
+                        await self.bot.log_channel.send('**[ERROR]** Failed to pin/unpin message in channel ' + str(after.channel.name) + ' ' + config.additional_error_message)
+
+                    return
+
                 # Make sure this is not one of our connected webhooks editing
                 if after.webhook_id:
                     for channel_id, (webhook, bridge_index) in self.webhooks.items():
                         if after.webhook_id == webhook.id:
                             return
-
-                author_name = str(after.author.display_name)
-                if not author_name:
-                    await self.bot.log_channel.send('**[WARNING]** Unknown author, rejecting edit on message in ' + str(after.channel.name) + ' ' + config.additional_error_message)
-                    return
 
                 gen_text = ''
                 embeds = []
@@ -569,11 +622,9 @@ class ServerBridge(BaseCog):
                 embeds.extend(after.embeds)
                 gen_text += await self.collect_attachments(after, embeds)
 
-                bridge_index = webhook_entry[1]
-
                 # Try to find the cached message so that we know which webhook messages we need to edit
                 for cached_message in self.message_cache[bridge_index]:
-                    if cached_message.find_message_for_edit_delete(after.id):
+                    if cached_message.find_message(after.id):
                         out_messages = []
 
                         # Replies prepend the original author's name similar to Matrix bridge
@@ -700,7 +751,7 @@ class ServerBridge(BaseCog):
 
                 # Try to find the cached message so that we know which webhook messages we need to delete
                 for i, cached_message in enumerate(self.message_cache[bridge_index]):
-                    if cached_message.find_message_for_edit_delete(message.id):
+                    if cached_message.find_message(message.id):
                         index = i
 
                         # This is the one, now delete all webhook messages associated with this:
