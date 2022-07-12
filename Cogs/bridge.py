@@ -641,10 +641,6 @@ class ServerBridge(BaseCog):
 
                         allowed_mentions = discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=False)
 
-                        # These may be overwritten during an iteration, so make a backup so they an be restored for the next one
-                        pukcab_len_embeds = len(embeds)
-                        pukcab_out_messages = copy.copy(out_messages)
-
                         # Go through all channels in this bridge, collect all messages posted in each respective channel, and try to fill them with the new content
                         for channel_id in self.bridges[bridge_index]:
                             if channel_id == after.channel.id:
