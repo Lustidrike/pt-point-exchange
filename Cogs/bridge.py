@@ -8,6 +8,7 @@ from .base_cog import BaseCog
 from collections import deque
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 class MessageCacheItem:
     """An item in the message cache.
@@ -64,7 +65,7 @@ class ServerBridge(BaseCog):
 
         # This is a runtime cache that associates messages sent by users with webhook messages of the forwarded post.
         # This is needed to be able to edit, delete or reply to webhook messages to mirror user actions.
-        # I considered a dictionary from webhook message Id to message Ids, but we would have to keep an additional timestamp and purge the table periodically via a timed task. This seems a little complex for such an easy problem. Therefore, a double-ended queue is used to solve the timestamping problem "naturally" since older messages will be removed first from the deque once it is full. This makes finding messages O(n*m) in the reply case, and O(n) in the edit/delete case. This is not optimal, but we usually limit these deques to 100 elements per bridge, which should be reasonably few to iterate a linked list (and a regular one of <10 elements within). I reckon the message fetch is much more likely to be a bottleneck in practice (though I haven't done any measurements). By appending to the left, can find recent elements more quickly.
+        # I considered a dictionary from webhook message Id to message Ids, but we would have to keep an additional timestamp and purge the table periodically via a timed task. This seems a little complex for such an easy problem. Therefore, a double-ended queue is used to solve the timestamping problem "naturally" since older messages will be removed first from the deque once it is full. This makes finding messages O(n*m) in the reply case, and O(n) in the edit/delete case. This is not optimal, but we usually limit these deques to 100 elements per bridge, which should be reasonably few to iterate a linked list (and a regular one of <10 elements within). I reckon the message fetch is much more likely to be a bottleneck in practice (though I haven't done any measurements). By appending to the left, we can find recent elements more quickly.
         self.message_cache = []
 
 
@@ -72,6 +73,11 @@ class ServerBridge(BaseCog):
         """Called by bot client's on_ready()."""
 
         try:
+            # Check for re-entry after connecting to discord servers:
+            if len(self.message_cache) == len(self.bridges):
+                log.info('bridge on_ready(): message cache is already populated, early exit.')
+                return
+
             print('=== BEGIN SERVER BRIDGE ===')
             print('Bot id: ' + str(self.bot_id))
 
