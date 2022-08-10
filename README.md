@@ -19,7 +19,7 @@ A feature that allows users on any server that invited the bot to set and subseq
 I.e. using "!set tr_map <url>" and "!tr_map" will have the bot display the URL that was set.
 
 ### Server bridge
-The bot can listen to messages posted in specific channels and forward these messages to other channels on multiple servers. This way, users not present on all servers can exchange infos and discuss development without participating in the other project at all (or even join the respective server).
+The bot can listen to messages posted in specific channels and forward these messages to other channels on multiple servers. This way, users not present on all servers can exchange info and discuss development without participating in the other project at all (or even join the respective server).
 Message forwarding is implemented via Discord webhooks.
 
 Limitations of the server bridge are:
