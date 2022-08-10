@@ -1,7 +1,7 @@
 # pt-point-exchange
 A Discord bot written in Python 3 that is used by the Project Tamriel and Tamriel Rebuilt modding communities.
 
-# About the provice mods
+# About the province mods
 Project Tamriel (https://www.project-tamriel.com/) and Tamriel Rebuilt (https://www.tamriel-rebuilt.org/) are collaborative Elder Scrolls video game mods that aim to create various provinces of the fictional game world "Tamriel" in the game "Morrowind".
 
 # About the name
