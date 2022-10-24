@@ -134,7 +134,7 @@ class Economy(BaseCog):
 
                     self.main_db.update({'free': diff}, self.bot.query.user == user['user'])
                     self.main_db.update({'loan': 0}, self.bot.query.user == user['user'])
-                    await self.bot.post_message(None, self.bot.bot_channel, '**[INFO]** ' + user['user'] + ' pays back his loan of ' + str(loan) + ' ' + config.currency_name + 's. They have ' + str(diff) + ' free ' + config.currency_name + 's left for the day.')
+                    await self.bot.post_message(None, self.bot.bot_channel, '**[INFO]** ' + user['user'] + ' pays back their loan of ' + str(loan) + ' ' + config.currency_name + 's. They have ' + str(diff) + ' free ' + config.currency_name + 's left for the day.')
             except Exception as e:
                 await self.bot.post_message(None, self.bot.bot_channel, '**[ERROR]** Oh no, something went wrong while paying back loans. ' + config.additional_error_message)
                 log.exception(e)
