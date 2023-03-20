@@ -2,6 +2,7 @@ import logging
 import discord
 import asyncio
 import copy
+import traceback
 from os import linesep
 from conf import config
 from .base_cog import BaseCog
@@ -167,6 +168,7 @@ class ServerBridge(BaseCog):
         except Exception as e:
             print('Failed to initialize bridges. Check logs')
             await self.bot.log_channel.send('**[ERROR]** Failed to initialize bridges. Check logs. ' + config.additional_error_message)
+            traceback.print_exception(type(e), e, e.__traceback__)
             log.fatal(e)
             self.webhooks = {} # Make sure we never attempt to do anything
 
