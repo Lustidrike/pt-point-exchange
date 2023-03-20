@@ -179,11 +179,7 @@ class Labels(BaseCog):
                 combined_table = [e['iid'] for e in sorted(self.label_table.all(), key=itemgetter('iid'), reverse=False)]
             else:
                 search_text = search_text.lower()
-                contains_table = [e['iid'] for e in sorted(filter(lambda x: search_text in x['iid'], self.label_table.all()), key=itemgetter('iid'))]
-                combined_table = sorted(filter(lambda x: self.label_frequencies.contains(self.bot.query.iid == x), contains_table), key=cmp_to_key(lambda x,y: -1 if self.label_frequencies.get(self.bot.query.iid == x)['count'] > self.label_frequencies.get(self.bot.query.iid == y)['count'] else 0))
-                rest_table = set(contains_table) - set(combined_table)
-                sorted_rest_table = sorted(rest_table, reverse=False)
-                combined_table.extend(sorted_rest_table)
+                combined_table = [e['iid'] for e in filter(lambda x: search_text in x['iid'], sorted(self.label_table.all(), key=itemgetter('iid'), reverse=False))]
 
             if len(combined_table) > 0:
                 quote = ''
