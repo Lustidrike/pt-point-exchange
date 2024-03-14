@@ -37,5 +37,6 @@ class SelfTimeout(BaseCog):
             await self.bot.post_error(ctx, "Could not time you out. You may have higher permissions than the bot.")
 
 async def setup(bot):
+    """Load self timeout cog."""
     await bot.add_cog(SelfTimeout(bot))
     log.info("Self Timeout cog loaded.")
