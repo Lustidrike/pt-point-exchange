@@ -128,7 +128,7 @@ class Holidays(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """Holidays cog load."""
-    bot.add_cog(Holidays(bot))
+    await bot.add_cog(Holidays(bot))
     log.info("Holidays cog loaded")

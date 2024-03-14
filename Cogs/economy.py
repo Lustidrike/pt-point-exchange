@@ -525,7 +525,7 @@ class Economy(BaseCog):
         for cog_name, cog in self.bot.cogs.items():
             await cog.on_season_end()
 
-def setup(bot):
+async def setup(bot):
     """Economy cog load."""
-    bot.add_cog(Economy(bot))
+    await bot.add_cog(Economy(bot))
     log.info("Economy cog loaded")

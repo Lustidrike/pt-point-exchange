@@ -256,7 +256,7 @@ class Stats(BaseCog):
             await self.bot.send_revertible(context, context.message.channel, result)
 
 
-def setup(bot):
+async def setup(bot):
     """Stats cog load."""
-    bot.add_cog(Stats(bot))
+    await bot.add_cog(Stats(bot))
     log.info("Stats cog loaded")

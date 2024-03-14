@@ -856,7 +856,7 @@ class Horserace(BaseCog):
         self.race_participants = {}
 
 
-def setup(bot):
+async def setup(bot):
     """Horserace cog load."""
-    bot.add_cog(Horserace(bot))
+    await bot.add_cog(Horserace(bot))
     log.info("Horserace cog loaded")

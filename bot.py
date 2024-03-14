@@ -12,7 +12,11 @@ from discord.ext import commands
 from conf import config
 from tinydb import TinyDB, Query
 
+logging.basicConfig()
+
 log = logging.getLogger(__name__)
+
+log.setLevel(logging.INFO)
 
 __all__ = ('EconomyBot')
 
@@ -41,33 +45,11 @@ class EconomyBot(commands.Bot):
             self.info_text += linesep + linesep + config.additional_info_text
             self.info_text += linesep + linesep + 'Type !help to see a list of available commands.' + linesep + linesep
 
-            amnt_failed = 0 
-
             # TimedTask must be started first if at all
             if 'timed_task' in config.cogs and config.cogs[0] != 'timed_task':
-                log.fatal('TimedTask is specified to be loaded; has to be loaded first!')
+                log.exception('TimedTask is specified to be loaded; has to be loaded first!')
                 sys.exit()
 
-            # Go through cogs and load them as extensions
-            # NOTE: Each cog adds its own bit to _self.info_text_
-            for cog_name in config.cogs:
-                try:
-                    cog_name = 'Cogs.' + cog_name
-                    self.load_extension(cog_name)
-                except Exception as e:
-                    amnt_failed += 1
-                    log.error('Failed to load extension ' + cog_name + ' with error ' + str(e))
-                else:
-                    log.info('Loading extension ' + cog_name)
-
-            timed_events_cog = self.get_cog('TimedTasks')
-            if timed_events_cog is not None:
-                timed_events_cog.register_timed_event(self.clear_message_cache)
- 
-            # If any cogs aren't loaded, bot behaviour is undefined because many cogs depend on each other - better not execute the thing and let the bot admin figure out what's going on.
-            if amnt_failed > 0:
-                log.fatal('Summary:\n Num failed extension loads: %d', amnt_failed)
-                sys.exit()
         except Exception as e:
             # If any exception occurs at this point, better not execute the thing and let the bot admin figure out what's going on.
             log.exception(e)
@@ -135,6 +117,28 @@ class EconomyBot(commands.Bot):
 
 
     async def on_ready(self):
+        # Go through cogs and load them as extensions
+        # NOTE: Each cog adds its own bit to _self.info_text_
+        amnt_failed = 0
+        for cog_name in config.cogs:
+            try:
+                cog_name = 'Cogs.' + cog_name
+                await self.load_extension(cog_name)
+            except Exception as e:
+                amnt_failed += 1
+                print('Failed to load extension ' + cog_name + ' with error ' + str(e))
+            else:
+                log.info('Loading extension ' + cog_name)
+        
+        timed_events_cog = self.get_cog('TimedTasks')
+        if timed_events_cog is not None:
+            timed_events_cog.register_timed_event(self.clear_message_cache)
+ 
+        # If any cogs aren't loaded, bot behaviour is undefined because many cogs depend on each other - better not execute the thing and let the bot admin figure out what's going on.
+        if amnt_failed > 0:
+            log.exception('Summary:\n Num failed extension loads:', amnt_failed)
+            sys.exit()
+
         print('Ready for use.')
         print('--------------')
         self.bot_channel = self.get_channel(config.bot_channel_id)

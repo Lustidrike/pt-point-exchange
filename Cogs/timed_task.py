@@ -73,7 +73,7 @@ class TimedTasks(BaseCog):
         self.timed_task.cancel()
 
 
-def setup(bot):
+async def setup(bot):
     """Load timed tasks cog."""
-    bot.add_cog(TimedTasks(bot))
+    await bot.add_cog(TimedTasks(bot))
     log.info("Timed tasks cog loaded")

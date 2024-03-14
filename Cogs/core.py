@@ -102,7 +102,7 @@ class Core(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """Core cog load."""
-    bot.add_cog(Core(bot))
+    await bot.add_cog(Core(bot))
     log.info("Core cog loaded")

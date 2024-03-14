@@ -47,7 +47,7 @@ Everyone may feel free to fork the project to fix bugs or to add their own gambl
 
 # How to install/run:
 1. Clone this repository
-2. Install dependencies: tinydb, discord.py
+2. Install dependencies: `pip install -r requirements.txt`
 3. Fill in your info in bot.ini (an example .ini is included, but not used by default). The important fields are: bot_channel_id, token, main_server and optionally holiday_announcement_channel_id if using the holidays cog. All IDs are long integers you can get by right-clicking a channel or server in discord. You will get your token by creating a discord 'app'. More info on discordapp.com/developers/applications/me.
 4. Fill in your log_channel_id - this channel is used *exclusively* to post errors that occur during message processing so that the project maintainer can fix any unexpected bugs.
 5. If using the server bridge feature, fill in your bot_id and bridges (bridges are separated by spaces, channels within a bridge separated by commas).

@@ -18,10 +18,10 @@ class Testing(BaseCog):
         timed_events_cog = BaseCog.load_dependency(self, 'TimedTasks')
         timed_events_cog.register_timed_event(self.testing_timed_task)
 
-    async def testing_timed_task(self):
+    async def testing_timed_task(self, context):
         await self.bot.post_message(context, self.bot.bot_channel, 'Testing timed task')
 
-    async def on_season_end(self):
+    async def on_season_end(self, context):
         await self.bot.post_message(context, self.bot.bot_channel, 'Testing season end')
         pass
 
@@ -41,7 +41,7 @@ class Testing(BaseCog):
         await self.bot.post_message(context, context.message.channel, 'Success!')
 
 
-def setup(bot):
+async def setup(bot):
     """Testing cog load."""
-    bot.add_cog(Testing(bot))
+    await bot.add_cog(Testing(bot))
     log.info("Testing cog loaded")

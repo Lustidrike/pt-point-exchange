@@ -134,7 +134,7 @@ class Gambling(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """Gambling cog load."""
-    bot.add_cog(Gambling(bot))
+    await bot.add_cog(Gambling(bot))
     log.info("Gambling cog loaded")

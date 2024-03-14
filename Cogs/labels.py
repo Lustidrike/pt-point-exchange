@@ -255,7 +255,7 @@ class Labels(BaseCog):
         await self.delete_internal(context, label)
 
 
-def setup(bot):
+async def setup(bot):
     """Labels cog load."""
-    bot.add_cog(Labels(bot))
+    await bot.add_cog(Labels(bot))
     log.info("Labels cog loaded")
