@@ -47,7 +47,7 @@ class EconomyBot(commands.Bot):
 
             # TimedTask must be started first if at all
             if 'timed_task' in config.cogs and config.cogs[0] != 'timed_task':
-                log.exception('TimedTask is specified to be loaded; has to be loaded first!')
+                log.fatal('TimedTask is specified to be loaded; has to be loaded first!')
                 sys.exit()
 
         except Exception as e:
