@@ -14,7 +14,7 @@ class SelfTimeout(BaseCog):
     async def selfto(self, ctx, duration: str = commands.parameter(description="Length of time out. Examples: 2m = 2 minutes, 5h = 5 hours.")):
         """Times the user out for a specified amount of time which cannot exceed 48 hours. Go do your work!"""
         BaseCog.check_not_private(self, ctx)
-        if duration[-1].lower() not in ["h", "m"] or len(duration) <= 1:
+        if len(duration) <= 1 or duration[-1].lower() not in ["h", "m"]:
             await self.bot.post_error(ctx, "Must supply a valid time duration.")
             return
         timechar = duration[-1]
