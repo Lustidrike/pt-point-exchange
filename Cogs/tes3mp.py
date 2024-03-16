@@ -58,7 +58,7 @@ class Tes3Mp(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """Tes3Mp cog load."""
-    bot.add_cog(Tes3Mp(bot))
+    await bot.add_cog(Tes3Mp(bot))
     log.info("Tes3Mp cog loaded")

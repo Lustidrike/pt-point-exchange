@@ -11,6 +11,7 @@ try:
     intents = discord.Intents.default()
     intents.members = False
     intents.presences = False
+    intents.message_content = True
     bot = EconomyBot(command_prefix=config.prefix, description=config.description, case_insensitive=True, help_command=commands.DefaultHelpCommand(dm_help=True), chunk_guilds_at_startup=False, intents=intents)
     bot.run(config.token)
 except Exception as e:

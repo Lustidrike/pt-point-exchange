@@ -31,7 +31,7 @@ class Northmarker(BaseCog):
             await self.bot.send_revertible(context, context.message.channel, '**[INFO]** Northmarker rotation is ' + formatted_rot + '.')
 
 
-def setup(bot):
+async def setup(bot):
     """Northmarker cog load."""
-    bot.add_cog(Northmarker(bot))
+    await bot.add_cog(Northmarker(bot))
     log.info("Northmarker cog loaded")

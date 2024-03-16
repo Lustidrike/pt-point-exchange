@@ -373,7 +373,7 @@ class Duel(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """Duels cog load."""
-    bot.add_cog(Duel(bot))
+    await bot.add_cog(Duel(bot))
     log.info("Duels cog loaded")

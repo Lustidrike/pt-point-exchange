@@ -1095,7 +1095,7 @@ class BattleRoyale(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """Battle royale cog load."""
-    bot.add_cog(BattleRoyale(bot))
+    await bot.add_cog(BattleRoyale(bot))
     log.info("Battle royale cog loaded")

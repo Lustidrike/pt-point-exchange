@@ -783,7 +783,7 @@ class ServerBridge(BaseCog):
 
 
 
-def setup(bot):
+async def setup(bot):
     """ServerBridge cog load."""
-    bot.add_cog(ServerBridge(bot))
+    await bot.add_cog(ServerBridge(bot))
     log.info("ServerBridge cog loaded")

@@ -174,7 +174,7 @@ class Reminders(BaseCog):
             log.exception(e)
 
 
-def setup(bot):
+async def setup(bot):
     """Load reminder cog."""
-    bot.add_cog(Reminders(bot))
+    await bot.add_cog(Reminders(bot))
     log.info("Reminder cog loaded")
