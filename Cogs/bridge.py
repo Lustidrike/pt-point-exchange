@@ -554,7 +554,11 @@ class ServerBridge(BaseCog):
         """Sends a message with a webhook. No splicing of content to handle oversized messages."""
 
         try:
-            webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embeds=embeds, allowed_mentions=allowed_mentions)
+            if embeds is None and embed is not None:
+                embeds = [embed]
+            elif embeds is None and embed is None:
+                embeds = []
+            webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embeds=embeds, allowed_mentions=allowed_mentions)
         except discord.errors.HTTPException as e:
             # Discord has a hard limit of 6000 characters across all embeds (including title, description, ...)
             if 'Invalid Form Body' in str(e):
@@ -566,12 +570,12 @@ class ServerBridge(BaseCog):
                     error_embed = discord.Embed()
                     error_embed.description = '_<The original message contains some additional non-text elements that could not be forwarded due to an internal error>_'
                     try:
-                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embed=error_embed, embeds=None, allowed_mentions=allowed_mentions)
+                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embed=error_embed, allowed_mentions=allowed_mentions)
                     except Exception as e:
                         log.exception(e)
                         await self.bot.log_channel.send('**[ERROR]** Critical error occurred while trying to send invalid form body error message! ' + str(message.channel.name) + ' ' + config.additional_error_message)
                         # Tough luck, try without any embeds
-                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embeds=None, allowed_mentions=allowed_mentions)
+                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, allowed_mentions=allowed_mentions)
             else:
                 raise e
 
