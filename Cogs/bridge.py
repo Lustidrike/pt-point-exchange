@@ -497,14 +497,14 @@ class ServerBridge(BaseCog):
             if out_messages:
                 if len(out_messages) > 1:
                     for msg in out_messages[:-1]:
-                        await self.send_with_webhook_internal(webhook=webhook, content=msg, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=None, embeds=None, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                        await self.send_with_webhook_internal(webhook=webhook, content=msg, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embed=None, embeds=None, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                         posted_anything = True
 
                 # Last message carries the embeds
-                await self.send_with_webhook_internal(webhook=webhook, content=out_messages[-1], wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=None, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                await self.send_with_webhook_internal(webhook=webhook, content=out_messages[-1], wait=wait, username=username, avatar_url=avatar_url, tts=tts, embed=None, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                 posted_anything = True # Not strictly necessary, but probably good practice
             elif embeds:
-                await self.send_with_webhook_internal(webhook=webhook, content=message.clean_content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=None, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                await self.send_with_webhook_internal(webhook=webhook, content=message.clean_content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embed=None, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                 posted_anything = True # Not strictly necessary, but probably good practice
             else:
                 raise ValueError('No messages and embeds to send after splitting!')
