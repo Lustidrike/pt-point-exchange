@@ -500,14 +500,14 @@ class ServerBridge(BaseCog):
             if out_messages:
                 if len(out_messages) > 1:
                     for msg in out_messages[:-1]:
-                        await self.send_with_webhook_internal(webhook=webhook, content=msg, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=None, files=None, embed=None, embeds=None, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                        await self.send_with_webhook_internal(webhook=webhook, content=msg, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=None, embeds=None, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                         posted_anything = True
 
                 # Last message carries the embeds
-                await self.send_with_webhook_internal(webhook=webhook, content=out_messages[-1], wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, files=files, embed=embed, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                await self.send_with_webhook_internal(webhook=webhook, content=out_messages[-1], wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                 posted_anything = True # Not strictly necessary, but probably good practice
             elif embeds:
-                await self.send_with_webhook_internal(webhook=webhook, content=message.clean_content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, files=files, embed=embed, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                await self.send_with_webhook_internal(webhook=webhook, content=message.clean_content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                 posted_anything = True # Not strictly necessary, but probably good practice
             else:
                 raise ValueError('No messages and embeds to send after splitting!')
@@ -557,7 +557,7 @@ class ServerBridge(BaseCog):
         """Sends a message with a webhook. No splicing of content to handle oversized messages."""
 
         try:
-            webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, files=files, embed=embed, embeds=embeds, allowed_mentions=allowed_mentions)
+            webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embeds=embeds, allowed_mentions=allowed_mentions)
         except discord.errors.HTTPException as e:
             # Discord has a hard limit of 6000 characters across all embeds (including title, description, ...)
             if 'Invalid Form Body' in str(e):
@@ -569,12 +569,12 @@ class ServerBridge(BaseCog):
                     error_embed = discord.Embed()
                     error_embed.description = '_<The original message contains some additional non-text elements that could not be forwarded due to an internal error>_'
                     try:
-                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, files=files, embed=error_embed, embeds=None, allowed_mentions=allowed_mentions)
+                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embed=error_embed, embeds=None, allowed_mentions=allowed_mentions)
                     except Exception as e:
                         log.exception(e)
                         await self.bot.log_channel.send('**[ERROR]** Critical error occurred while trying to send invalid form body error message! ' + str(message.channel.name) + ' ' + config.additional_error_message)
                         # Tough luck, try without any embeds
-                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, files=files, embed=None, embeds=None, allowed_mentions=allowed_mentions)
+                        webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, file=file, embeds=None, allowed_mentions=allowed_mentions)
             else:
                 raise e
 
