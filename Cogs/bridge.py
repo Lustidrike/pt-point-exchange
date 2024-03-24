@@ -177,8 +177,7 @@ class ServerBridge(BaseCog):
         """React to messages. Called by bot client."""
 
         # NOTE: exceptions are caught by calling function
-
-        if message.type != discord.MessageType.default:
+        if message.type not in [discord.MessageType.default, discord.MessageType.reply]:
             # Ignore system messages
             return
 
@@ -247,7 +246,6 @@ class ServerBridge(BaseCog):
         wait = True
         tts = False
         embeds = []
-
         allowed_mentions = discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=False)
 
         # Images are just pasted after the message contents to show up via discord's built-in expansion
@@ -262,7 +260,6 @@ class ServerBridge(BaseCog):
 
         # NOTE: We build the reply embed before collecting attachments since we might add the @<author> bit towards the end of the message contents, so the quote has to come first if it exists
         reference_author = await self.get_reference_author_with_reply_embeds(message, embeds, reference_author_mention, channel_with_mention)
-
         embeds.extend(message.embeds)
 
         # Assemble a list of URLs and embeds to represent images and other attachments
@@ -348,8 +345,8 @@ class ServerBridge(BaseCog):
                             #await self.bot.log_channel.send('**[WARNING]** Failed to mention author on channel ' + str(message.channel.name) + '. Check logs. ' + config.additional_error_message)
                             ## NOTE: reference_author_mention is now None, so we use the default one that doesn't ping
 
-                    if reference_message.author.display_name:
-                        reference_author = reference_message.author.display_name
+                    if reference_message.author.name:
+                        reference_author = reference_message.author.name
                     if reference_message.author.avatar.url:
                         avatar_url = reference_message.author.avatar.url
                     created_at = reference_message.created_at
@@ -487,7 +484,6 @@ class ServerBridge(BaseCog):
 
     async def send_with_webhook(self, webhook, wait, username, avatar_url, tts, embeds, allowed_mentions, gen_text, message, message_cache_item):
         """Forward a message using a webhook."""
-
         out_messages = []
         posted_anything = False
 
@@ -497,7 +493,7 @@ class ServerBridge(BaseCog):
             if out_messages:
                 if len(out_messages) > 1:
                     for msg in out_messages[:-1]:
-                        await self.send_with_webhook_internal(webhook=webhook, content=msg, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embed=None, embeds=None, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
+                        await self.send_with_webhook_internal(webhook=webhook, content=msg, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embed=None, embeds=embeds, allowed_mentions=allowed_mentions, sent_webhook_messages=message_cache_item.webhook_message_ids, message=message)
                         posted_anything = True
 
                 # Last message carries the embeds
@@ -552,12 +548,9 @@ class ServerBridge(BaseCog):
 
     async def send_with_webhook_internal(self, webhook, content, wait, username, avatar_url, tts, embed, embeds, allowed_mentions, sent_webhook_messages, message):
         """Sends a message with a webhook. No splicing of content to handle oversized messages."""
-
         try:
-            if embeds is None and embed is not None:
+            if len(embeds) == 0 and embed is not None:
                 embeds = [embed]
-            elif embeds is None and embed is None:
-                embeds = []
             webhook_message = await webhook.send(content=content, wait=wait, username=username, avatar_url=avatar_url, tts=tts, embeds=embeds, allowed_mentions=allowed_mentions)
         except discord.errors.HTTPException as e:
             # Discord has a hard limit of 6000 characters across all embeds (including title, description, ...)
@@ -627,7 +620,6 @@ class ServerBridge(BaseCog):
 
                 # NOTE: We build the reply embed before collecting attachments since we might add the @<author> bit towards the end of the message contents, so the quote has to come first if it exists
                 reference_author = await self.get_reference_author_with_reply_embeds(after, embeds, reference_author_mention, channel_with_mention)
-
                 embeds.extend(after.embeds)
                 gen_text += await self.collect_attachments(after, embeds)
 
