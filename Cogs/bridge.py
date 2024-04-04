@@ -289,7 +289,10 @@ class ServerBridge(BaseCog):
                     gen_text_with_reference = gen_text
 
                 channel_webhook = self.webhooks.get(channel_id)[0]
-                await self.send_with_webhook(channel_webhook, wait, message.author.display_name, message.author.avatar.url, tts, embeds, allowed_mentions, gen_text_with_reference, message, message_cache_item)
+                if message.author.display_avatar is not None:
+                    await self.send_with_webhook(channel_webhook, wait, message.author.display_name, message.author.display_avatar.url, tts, embeds, allowed_mentions, gen_text_with_reference, message, message_cache_item)
+                else:
+                    await self.send_with_webhook(channel_webhook, wait, message.author.display_name, None, tts, embeds, allowed_mentions, gen_text_with_reference, message, message_cache_item)
             except Exception as e:
                 log.exception(e)
                 await self.bot.log_channel.send('**[ERROR]** A critical error occurred while forwarding a message on server bridge (low level) to channel ' + str(message.channel.name) + '. Check logs. ' + config.additional_error_message)
