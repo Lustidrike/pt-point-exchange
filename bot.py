@@ -33,6 +33,7 @@ class EconomyBot(commands.Bot):
 
             self.log_channel = None
             self.admin_roles = [int(admin_role_id) for admin_role_id in config.admin_roles]
+            self.dev_roles = [int(dev_role_id) for dev_role_id in config.dev_roles]
 
             # Main database for current season
             self.database = TinyDB(config.database)
