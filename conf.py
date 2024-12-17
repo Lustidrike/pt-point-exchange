@@ -32,6 +32,7 @@ class Config:
             self.name = self.config.get('General', 'name', fallback='Test Economy')
             self.currency_name = self.config.get('General', 'currency_name', fallback='Test Points')
             self.admin_roles = self.config.get('General', 'admin_roles', fallback='').split(',')
+            self.dev_roles = self.config.get('General', 'dev_roles', fallback='').split(',')
 
             self.prefix = self.config.get('General', 'prefix', fallback='!')
             self.cogs = self.config.get('General', 'cogs', fallback='timed_task,core,economy,northmarker,labels,gambling,holidays,duel,battleroyale,horserace,stats,tes3mp,bridge').split(',')

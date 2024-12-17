@@ -97,6 +97,12 @@ class BaseCog(commands.Cog):
             raise commands.CheckFailure(message='Permission denied. Your roles are insufficient to use this specific command.')
 
 
+    def check_dev(self, ctx):
+        roles = [role.id for role in ctx.message.author.roles]
+        if ctx.message.author.name != config.owner and not (set(roles) & set(self.bot.dev_roles)):
+            raise commands.CheckFailure(message='Permission denied. Your roles are insufficient to use this specific command.')
+
+
     def check_owner(self, ctx):
         if ctx.message.author.name != config.owner:
             raise commands.CheckFailure(message='Permission denied. Your roles are insufficient to use this specific command.')

@@ -88,6 +88,7 @@ class Labels(BaseCog):
 
         BaseCog.check_forbidden_characters(self, context)
         BaseCog.check_not_private(self, context)
+        BaseCog.check_admin(self, context)
         label = label.lower()
 
         if label == 'label':
@@ -111,6 +112,7 @@ class Labels(BaseCog):
 
         BaseCog.check_forbidden_characters(self, context)
         BaseCog.check_not_private(self, context)
+        BaseCog.check_dev(self, context)
         label = label.lower()
 
         if label == 'label':
